@@ -102,18 +102,19 @@ int main(void)
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  puts("System is up!\n");
+  
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  HAL_TickFreqTypeDef f = HAL_GetTickFreq();
+  uint32_t f = HAL_RCC_GetSysClockFreq() / 1000000;
   while (1)
   {
     // Let's see what out clock is set to
     morse8(f);
-    HAL_Delay(100);
-    /* USER CODE END WHILE */
+    HAL_Delay(1000);
+  /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
 
@@ -135,7 +136,7 @@ void SystemClock_Config(void)
     /**Initializes the CPU, AHB and APB busses clocks 
     */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
