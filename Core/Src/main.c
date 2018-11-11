@@ -97,9 +97,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  //  MX_DMA_Init();
-  //  MX_TIM2_Init();
-  //  MX_TIM3_Init();
+  MX_DMA_Init();
+  MX_TIM2_Init();
+  MX_TIM3_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
@@ -107,13 +107,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  HAL_TickFreqTypeDef f = HAL_GetTickFreq();
   while (1)
   {
-    // Just to check we're working
-    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-    //morse8(0);
-    HAL_Delay(500);
-  /* USER CODE END WHILE */
+    // Let's see what out clock is set to
+    morse8(f);
+    HAL_Delay(100);
+    /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
 
@@ -153,7 +153,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {

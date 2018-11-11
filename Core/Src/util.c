@@ -8,13 +8,13 @@ void morse(uint32_t value, uint32_t bits) {
   for (int i = 0; i < bits; i++) {
     LED_OFF();
     if (((value << i) & (1 << (bits - 1)))) {
-      HAL_Delay(100);
+      HAL_Delay(5);
       LED_ON();
-      HAL_Delay(400);
+      HAL_Delay(20);
     } else {
-      HAL_Delay(400);
+      HAL_Delay(20);
       LED_ON();
-      HAL_Delay(100);
+      HAL_Delay(5);
     }
   }
   LED_OFF();
