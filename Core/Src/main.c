@@ -97,24 +97,22 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_TIM2_Init();
-  MX_TIM3_Init();
+  //  MX_DMA_Init();
+  //  MX_TIM2_Init();
+  //  MX_TIM3_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  puts ("I");
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  puts("X");
   while (1)
   {
-    puts(".");
     // Just to check we're working
-    morse8(0);
-    HAL_Delay(5000);
+    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+    //morse8(0);
+    HAL_Delay(500);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
