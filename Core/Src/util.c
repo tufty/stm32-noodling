@@ -22,12 +22,6 @@ void morse(uint32_t value, uint32_t bits) {
   LED_OFF();
 }
 
-size_t strlen(const char * src) {
-  char * c = (char *)src;
-  for (; *c; c++) {}
-  return (size_t)(c - src);
-}
-
-int puts(const char * src) {
-  return HAL_UART_Transmit(&huart1, (uint8_t *)src, strlen(src), 10000);
+void _putchar(char character) {
+  HAL_UART_Transmit(&huart1, (uint8_t*)&character, 1, 10000);
 }

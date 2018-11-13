@@ -14,7 +14,6 @@ void morse(uint32_t value, uint32_t bits);
 #define morse16(x) morse(x, 16)
 #define morse32(x) morse(x, 32)
 
-int puts (const char * src);
-size_t strlen(const char * src);
+void _putchar(char character);
 
 #endif

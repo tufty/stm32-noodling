@@ -37,6 +37,7 @@
 
 /* USER CODE BEGIN 0 */
 
+#include "tim.h"
 #include "util.h"
 
 /* USER CODE END 0 */
@@ -233,6 +234,31 @@ void USART1_IRQHandler(void)
 }
 
 /* USER CODE BEGIN 1 */
+
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+  if (htim->Instance == TIM2) {
+    // Turn off this interrupt, start TIM3
+    __HAL_TIM_DISABLE_IT(htim, TIM_IT_CC1);
+    __HAL_TIM_ENABLE(&htim3);
+    __HAL_TIM_ENABLE_IT(&htim3, TIM_IT_UPDATE);
+  }
+
+  LED_ON();
+}
+
+void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim) {
+  if (htim->Instance == TIM3) {
+    // TIM3 has timed out with no 
+    // Turn off this interrupt, enable TIM2 capture interrupt
+    __HAL_TIM_DISABLE_IT(htim, TIM_IT_UPDATE);
+    __HAL_TIM_DISABLE(htim);
+    __HAL_TIM_ENABLE_IT(&htim2, TIM_IT_CC1);
+
+    // Do other stuff here.
+    LED_OFF();
+  }
+}
+
 
 /* USER CODE END 1 */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

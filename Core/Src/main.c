@@ -46,6 +46,7 @@
 
 /* USER CODE BEGIN Includes */
 #include "util.h"
+#include "printf.h"
 
 /* USER CODE END Includes */
 
@@ -53,7 +54,8 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-
+uint32_t tim2_shadow[10];
+uint32_t tim3_shadow;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -102,18 +104,49 @@ int main(void)
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  puts("System is up!\n");
+
+  // Start by initialising DMA interrupt for Timer2 CC1.  No hooks in generated hal.c so do it here.
+  HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
+
+  // Now we need to start the timers.
+  // First up, Timer 2
+  // This will do DMA on channel 1 capture complete, in order to give us direction and count.  This
+  // will be a 0x28 byte block
+  // Obviously, we can't do this directly with HAL.
+  htim2.hdma[TIM_DMA_ID_CC1]->XferCpltCallback = TIM_DMACaptureCplt;
+  htim2.hdma[TIM_DMA_ID_CC1]->XferErrorCallback = TIM_DMAError ;
+
+  HAL_DMA_Start_IT(htim2.hdma[TIM_DMA_ID_CC1], (uint32_t)&htim2.Instance->CR1, (uint32_t )&tim2_shadow, 0x28);
+
+  __HAL_TIM_ENABLE(&htim2);
+  
+  TIM_CCxChannelCmd(htim2.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
+  TIM_CCxChannelCmd(htim2.Instance, TIM_CHANNEL_2, TIM_CCx_ENABLE);
+
+  __HAL_TIM_ENABLE_DMA(&htim2, TIM_DMA_CC1);
+  __HAL_TIM_ENABLE_IT(&htim2, TIM_IT_CC1);
+
+  // And Timer3
+  // This will dma on trigger, and have an output compare interrupt
+  htim3.hdma[TIM_DMA_ID_TRIGGER]->XferCpltCallback = TIM_DMACaptureCplt;
+  htim3.hdma[TIM_DMA_ID_TRIGGER]->XferErrorCallback = TIM_DMAError ;
+
+  HAL_DMA_Start_IT(htim3.hdma[TIM_DMA_ID_TRIGGER], (uint32_t)&htim3.Instance->CNT, (uint32_t )&tim3_shadow, 0x4);
+
+  TIM_CCxChannelCmd(htim3.Instance, TIM_CHANNEL_1, TIM_CCx_ENABLE);
+
+  // We won't start TIM3 yet.
   
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint32_t f = HAL_RCC_GetSysClockFreq() / 1000000;
   while (1)
   {
-    // Let's see what out clock is set to
-    morse8(f);
-    HAL_Delay(1000);
+    printf("count %li\n", tim2_shadow[9]);
+
+    HAL_Delay(5000);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
